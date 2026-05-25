@@ -1,5 +1,5 @@
 # 🛠️ Installation
 
 ```console
-$ pip install investiny
+uv add investiny
 ```

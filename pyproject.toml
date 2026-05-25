@@ -1,42 +1,47 @@
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
 
-[tool.poetry]
+[project]
 name = "investiny"
 version = "0.7.2"
-packages = [
-    { include = "investiny", from = "src" },
-]
-description = "🤏🏻 `investpy` but made tiny."
-authors = [
-    "Alvaro Bartolome <alvarobartt@yahoo.com>"
-]
+description = "investpy but made tiny."
 readme = "README.md"
-homepage = "https://github.com/alvarobartt/investiny"
-documentation = "https://github.com/alvarobartt/investiny"
-repository = "https://investiny.readthedocs.io/"
-license = "MIT License"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    { name = "Alvaro Bartolome", email = "alvarobartt@yahoo.com" },
+]
+dependencies = [
+    "curl-cffi>=0.13.0,<1.0.0",
+    "pydantic>=1.10.2,<2.0.0",
+]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-curl-cffi = "^0.13.0"
-pydantic = "^1.10.2"
-mkdocs = { version = "^1.4.0", optional = true }
-mkdocs-material = { version = "^8.5.4", optional = true }
-mkdocs-git-revision-date-localized-plugin = { version = "^1.1.0", optional = true }
-mkdocstrings = { version = "^0.19.0", extras = ["python"], optional = true }
+[project.optional-dependencies]
+docs = [
+    "mkdocs>=1.4.0,<2.0.0",
+    "mkdocs-material>=8.5.4,<9.0.0",
+    "mkdocs-git-revision-date-localized-plugin>=1.1.0,<2.0.0",
+    "mkdocstrings[python]>=0.19.0,<1.0.0",
+]
 
-[tool.poetry.extras]
-docs = ["mkdocs", "mkdocs-material", "mkdocs-git-revision-date-localized-plugin", "mkdocstrings"]
+[project.urls]
+Homepage = "https://github.com/alvarobartt/investiny"
+Documentation = "https://investiny.readthedocs.io/"
+Repository = "https://github.com/alvarobartt/investiny"
 
-[tool.poetry.dev-dependencies]
-black = "^22.6.0"
-flake8 = "^4.0.1"
-isort = "^5.10.1"
-mypy = "^0.971"
-pre-commit = "^2.20.0"
-pytest = "^7.1.2"
+[dependency-groups]
+dev = [
+    "black>=22.6.0,<23.0.0",
+    "flake8>=7.0.0,<8.0.0",
+    "isort>=5.10.1,<6.0.0",
+    "mypy>=0.971,<1.0.0",
+    "pre-commit>=2.20.0,<3.0.0",
+    "pytest>=7.1.2,<8.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/investiny"]
 
 [tool.isort]
 profile = "black"

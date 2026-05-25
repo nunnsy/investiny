@@ -113,8 +113,8 @@ venv.bak/
 .vscode/
 .vscode/*
 
-# Poetry
-*poetry.lock*
+# uv
+uv.lock
 
 # DS Store
 .DS_Store

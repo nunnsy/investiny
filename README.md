@@ -35,9 +35,13 @@ which seems to be more reliable right now according to the ran tests, as well as
 
 ## 🛠️ Installation
 
-`investiny` requires Python 3.8+ and can be installed with `pip` as it follows:
+`investiny` requires Python 3.8+ and can be installed with `pip` as follows:
 
-`pip install investiny`
+`pip install investiny`, or, `uv add investiny`
+
+For local development in this repository:
+
+`uv sync --group dev --extra docs`
 
 ---
 
