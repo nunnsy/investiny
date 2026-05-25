@@ -7,6 +7,8 @@ on:
       - main
     paths:
       - .github/workflows/ci-cd.yaml
+      - pyproject.toml
+      - Makefile
       - src/**
       - tests/**
   release:
@@ -14,71 +16,54 @@ on:
       - published
 
 jobs:
-  check-quality:
+  ci:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/${{ github.repository }}:main
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: setup-uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: install-dev-dependencies
+        run: uv sync --group dev
 
       - name: quality
         run: make quality
 
-  check-types:
-    needs: check-quality
-
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/${{ github.repository }}:main
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
       - name: types
         run: make types
-
-  run-tests:
-    needs: check-types
-
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/${{ github.repository }}:main
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: install-package
-        run: uv sync --group dev
 
       - name: tests
         run: make tests
 
   deploy-docs:
-    needs: run-tests
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/${{ github.repository }}:main
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: setup-uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
 
       - name: install-docs
         run: uv sync --group dev --extra docs
@@ -87,19 +72,24 @@ jobs:
         run: uv run --group dev --extra docs mkdocs gh-deploy --force
 
   publish-package:
-    needs: deploy-docs
+    needs: ci
     if: github.event_name == 'release'
 
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/${{ github.repository }}:main
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: setup-uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
 
       - name: build-package
         run: uv build
