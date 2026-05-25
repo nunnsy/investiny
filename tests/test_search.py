@@ -2,6 +2,8 @@ import pytest
 
 from investiny.search import search_assets
 
+pytestmark = pytest.mark.live
+
 
 @pytest.mark.usefixtures("query")
 def test_search(query: str) -> None:

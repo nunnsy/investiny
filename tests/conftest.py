@@ -1,6 +1,29 @@
+import os
 from typing import List
 
 import pytest
+
+
+def _run_live_tests() -> bool:
+    return os.getenv("INVESTINY_RUN_LIVE_TESTS", "").lower() in {"1", "true", "yes"}
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    config.addinivalue_line(
+        "markers",
+        "live: marks tests that hit live Investing.com endpoints",
+    )
+
+
+@pytest.fixture(autouse=True)
+def skip_live_tests_on_ci(request: pytest.FixtureRequest) -> None:
+    if request.node.get_closest_marker("live") is None:
+        return
+
+    if os.getenv("CI") and not _run_live_tests():
+        pytest.skip(
+            "Skipping live endpoint tests on CI. Set INVESTINY_RUN_LIVE_TESTS=1 to enable."
+        )
 
 
 @pytest.fixture
