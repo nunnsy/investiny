@@ -1,22 +1,22 @@
 .PHONY: quality style types tests build-docs serve-docs
 
 quality:
-	black --check --target-version py39 --preview src/investiny tests
-	isort --check-only src/investiny tests
-	flake8 src/investiny tests
+	uv run --group dev black --check --target-version py39 --preview src/investiny tests
+	uv run --group dev isort --check-only src/investiny tests
+	uv run --group dev flake8 src/investiny tests
 
 style:
-	black --target-version py39 --preview src/investiny tests
-	isort src/investiny tests
+	uv run --group dev black --target-version py39 --preview src/investiny tests
+	uv run --group dev isort src/investiny tests
 
 types:
-	mypy src/investiny tests
+	uv run --group dev mypy src/investiny tests
 
 tests:
-	pytest tests/ --durations 0 -s
+	uv run --group dev pytest tests/ --durations 0 -s
 
 build-docs:
-	mkdocs build
+	uv run --group dev --extra docs mkdocs build
 
 serve-docs:
-	mkdocs serve
+	uv run --group dev --extra docs mkdocs serve

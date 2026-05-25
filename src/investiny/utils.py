@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Literal, Tuple, Union
+from typing import Any, Dict, List, Literal, Tuple, Union, cast
 from uuid import uuid4
 
 from curl_cffi import requests
@@ -36,9 +36,18 @@ def request_to_investing(
         raise ConnectionError(
             f"Request to Investing.com API failed with error code: {r.status_code}."
         )
-    d = r.json()
+    d = cast(
+        Union[Dict[str, Any], List[Dict[str, Any]]],
+        r.json(),  # type: ignore[no-untyped-call]
+    )
 
-    if endpoint in ["history", "quotes"] and d["s"] != "ok":
+    if endpoint in ["history", "quotes"]:
+        if not isinstance(d, dict):
+            raise ConnectionError("Invalid response format from Investing.com API.")
+
+        if d["s"] == "ok":
+            return d
+
         raise ConnectionError(
             f"Request to Investing.com API failed with error message: {d['s']}."
             if "nextTime" not in d
@@ -48,7 +57,8 @@ def request_to_investing(
                 f" `from_date={datetime.fromtimestamp(d['nextTime'], tz=timezone.utc).strftime(Config.date_format)}`."
             )
         )
-    return d  # type: ignore
+
+    return d
 
 
 def calculate_date_intervals(

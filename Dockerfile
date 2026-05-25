@@ -6,9 +6,8 @@ RUN apt-get update \
 ENV PYTHONUNBUFFERED=1
 
 RUN python -m pip install pip --upgrade \
-    && python -m pip install poetry \
-    && python -m poetry config virtualenvs.create false
+    && python -m pip install uv
 
 COPY . .
 
-RUN python -m poetry install
+RUN uv sync --group dev --extra docs
