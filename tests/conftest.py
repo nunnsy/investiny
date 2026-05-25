@@ -22,7 +22,8 @@ def skip_live_tests_on_ci(request: pytest.FixtureRequest) -> None:
 
     if os.getenv("CI") and not _run_live_tests():
         pytest.skip(
-            "Skipping live endpoint tests on CI. Set INVESTINY_RUN_LIVE_TESTS=1 to enable."
+            "Skipping live endpoint tests on CI. Set INVESTINY_RUN_LIVE_TESTS=1 to"
+            " enable."
         )
 
 
