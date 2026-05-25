@@ -4,6 +4,8 @@ import pytest
 
 from investiny import info
 
+pytestmark = pytest.mark.live
+
 
 @pytest.mark.usefixtures("asset")
 def test_info_with_asset(asset: str) -> None:

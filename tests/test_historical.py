@@ -2,6 +2,8 @@ import pytest
 
 from investiny import historical_data
 
+pytestmark = pytest.mark.live
+
 
 @pytest.mark.usefixtures("investing_id", "from_date", "to_date")
 def test_historical(investing_id: int, from_date: str, to_date: str) -> None:
